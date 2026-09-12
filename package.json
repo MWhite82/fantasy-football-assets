@@ -1,0 +1,6 @@
+{
+  "name": "fantasy-football-assets",
+  "private": true,
+  "scripts": {"build": "node build.js"},
+  "dependencies": {"sharp": "^0.34.3"}
+}
