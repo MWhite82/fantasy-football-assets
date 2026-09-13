@@ -49,6 +49,7 @@ function glanceSvg(){
 async function main(){
   await sharp(Buffer.from(heroSvg())).png({compressionLevel:9,palette:true}).toFile('dist/mnl-header.png');
   await sharp(Buffer.from(glanceSvg())).png({compressionLevel:9,palette:true}).toFile('dist/mnl-glance.png');
+  // Publish the approved Schism images to Netlify's dist directory.
   for (const name of ['schism-overview-final.jpg','schism-glance-final.jpg']) {
     if (fs.existsSync(name)) fs.copyFileSync(name, path.join('dist', name));
   }
