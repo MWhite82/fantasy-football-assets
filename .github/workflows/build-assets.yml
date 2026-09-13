@@ -27,11 +27,9 @@ jobs:
         run: |
           cp dist/mnl-header.png mnl-header.png
           cp dist/mnl-glance.png mnl-glance.png
-          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-6a30-81fd-b80d-a96f70797cfe/raw?se=2026-09-13T02%3A19%3A18Z&sp=r&sv=2026-02-06&sr=b&scid=5dbe8436-cafb-4b34-997f-baba2768e953&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T01%3A25%3A24Z&ske=2026-09-14T01%3A25%3A24Z&sks=b&skv=2026-02-06&sig=Ma5zEvTF%2BQFmb6Mtup6LN7ZMpTdIHM/fUTTi9x2auhk%3D' -o mnl-overview-final.jpg
-          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-106c-81fd-bed4-de78ae0df15d/raw?se=2026-09-13T02%3A19%3A18Z&sp=r&sv=2026-02-06&sr=b&scid=5dbe8436-cafb-4b34-997f-baba2768e953&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T00%3A16%3A32Z&ske=2026-09-14T00%3A16%3A32Z&sks=b&skv=2026-02-06&sig=N4CV2tB4xUofVL85MxuXzrKNlT1uIoQstdP2w5QoPIE%3D' -o mnl-glance-final.jpg
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add mnl-header.png mnl-glance.png mnl-overview-final.jpg mnl-glance-final.jpg
+          git add mnl-header.png mnl-glance.png
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish approved Monday Night Lights rule graphics [skip ci]"
+          git commit -m "Build Monday Night Lights image assets [skip ci]"
           git push
