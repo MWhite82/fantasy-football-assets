@@ -2,8 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 fs.mkdirSync('dist', { recursive: true });
+fs.mkdirSync('manager-banners', { recursive: true });
+fs.mkdirSync(path.join('dist','manager-banners'), { recursive: true });
 
-const navy='#061626', slate='#294759', gold='#dfad59', ice='#f5f8fb', white='#ffffff', muted='#b9c7d1';
+const navy='#061626', slate='#294759', gold='#dfad59', ice='#f5f8fb', white='#ffffff', muted='#b9c7d1', teal='#28c7c0';
 const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
 function heroSvg(){
@@ -46,10 +48,32 @@ function glanceSvg(){
   </svg>`;
 }
 
+function managerBannerSvg(){
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="300" viewBox="0 0 1600 300">
+  <defs>
+    <linearGradient id="mbg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#061626"/><stop offset=".55" stop-color="#0b2d43"/><stop offset="1" stop-color="#123b4c"/></linearGradient>
+    <radialGradient id="lamp"><stop stop-color="#ffffff" stop-opacity=".9"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+    <filter id="soft"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-opacity=".35"/></filter>
+  </defs>
+  <rect width="1600" height="300" fill="url(#mbg)"/>
+  <ellipse cx="80" cy="20" rx="170" ry="110" fill="url(#lamp)" opacity=".35"/><ellipse cx="1520" cy="20" rx="170" ry="110" fill="url(#lamp)" opacity=".28"/>
+  <rect y="236" width="1600" height="64" fill="#0a2b31" opacity=".95"/><path d="M0 268 H1600" stroke="#dce8e0" stroke-opacity=".18" stroke-width="2"/>
+  <g transform="translate(85 46)" filter="url(#soft)"><path d="M22 145 C20 50,92 8,176 18 C244 26,286 75,278 146 L245 146 C239 100,207 72,163 67 C117 61,77 84,65 127 L100 127 C110 100,134 86,163 89 C189 91,210 108,216 133 L216 160 L22 160 Z" fill="#08111a" stroke="${white}" stroke-opacity=".8" stroke-width="5"/><rect x="86" y="92" width="135" height="46" rx="9" fill="#0f2636" stroke="${gold}" stroke-width="3"/><text x="153" y="124" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="28" font-weight="900" fill="${white}">SCHISM</text><path d="M218 136 L298 146" stroke="${white}" stroke-width="7" stroke-linecap="round"/><path d="M230 154 L300 166" stroke="${white}" stroke-width="5" stroke-linecap="round"/></g>
+  <text x="840" y="112" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="82" font-weight="900" letter-spacing="5" fill="${white}">MITCH</text>
+  <text x="840" y="174" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="48" font-weight="800" letter-spacing="2" fill="${teal}">WAKANDA RIGGITYWRECKERS</text>
+  <line x1="455" y1="204" x2="1225" y2="204" stroke="${gold}" stroke-width="3" opacity=".9"/>
+  <text x="840" y="236" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="700" letter-spacing="7" fill="${muted}">SCHISM DYNASTY LEAGUE</text>
+  <text x="1455" y="92" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="700" letter-spacing="3" fill="${white}">SAME LEAGUE.</text>
+  <text x="1455" y="122" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="700" letter-spacing="3" fill="${teal}">HIGHER STANDARDS.</text>
+  </svg>`;
+}
+
 async function main(){
   await sharp(Buffer.from(heroSvg())).png({compressionLevel:9,palette:true}).toFile('dist/mnl-header.png');
   await sharp(Buffer.from(glanceSvg())).png({compressionLevel:9,palette:true}).toFile('dist/mnl-glance.png');
-  // Publish the approved Schism images to Netlify's dist directory.
+  const banner = sharp(Buffer.from(managerBannerSvg())).png({compressionLevel:9});
+  await banner.clone().toFile('manager-banners/mitch-riggitywreckers-banner.png');
+  await banner.clone().toFile(path.join('dist','manager-banners','mitch-riggitywreckers-banner.png'));
   for (const name of ['schism-overview-final.jpg','schism-glance-final.jpg']) {
     if (fs.existsSync(name)) fs.copyFileSync(name, path.join('dist', name));
   }
