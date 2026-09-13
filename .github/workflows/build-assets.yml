@@ -18,13 +18,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Publish revised Mitch banner
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - run: node build.js
+      - name: Publish generated assets to repository root
         run: |
-          mkdir -p manager-banners
-          curl -L 'https://oaisdmntprwestcentralus.blob.core.windows.net/files/00000000-bd10-81fb-a754-dce84549dfe4/raw?se=2026-09-13T13%3A50%3A57Z&sp=r&sv=2026-02-06&sr=b&scid=09ad18dd-f270-4980-81e7-3d499402df0f&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T12%3A56%3A34Z&ske=2026-09-14T12%3A56%3A34Z&sks=b&skv=2026-02-06&sig=VE%2BPPogNBeqnK66OBvNwRyK4HV5IVJ8AcvkrfoiTD2g%3D' -o manager-banners/mitch-riggitywreckers-banner-v2.png
+          cp dist/mnl-header.png mnl-header.png
+          cp dist/mnl-glance.png mnl-glance.png
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add manager-banners/mitch-riggitywreckers-banner-v2.png
+          git add mnl-header.png mnl-glance.png manager-banners/mitch-riggitywreckers-banner.png
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish revised Mitch manager banner [skip ci]"
+          git commit -m "Build fantasy football image assets [skip ci]"
           git push
