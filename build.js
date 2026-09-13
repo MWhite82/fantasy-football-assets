@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const sharp = require('sharp');
 fs.mkdirSync('dist', { recursive: true });
 
@@ -48,6 +49,9 @@ function glanceSvg(){
 async function main(){
   await sharp(Buffer.from(heroSvg())).png({compressionLevel:9,palette:true}).toFile('dist/mnl-header.png');
   await sharp(Buffer.from(glanceSvg())).png({compressionLevel:9,palette:true}).toFile('dist/mnl-glance.png');
-  fs.writeFileSync('dist/index.html', `<!doctype html><meta charset="utf-8"><title>Fantasy Football Assets</title><body style="font-family:system-ui;background:#061626;color:white;padding:40px"><h1>Fantasy Football Assets</h1><p>Monday Night Lights image assets.</p><ul><li><a style="color:#dfad59" href="/mnl-header.png">mnl-header.png</a></li><li><a style="color:#dfad59" href="/mnl-glance.png">mnl-glance.png</a></li></ul></body>`);
+  for (const name of ['schism-overview-final.jpg','schism-glance-final.jpg']) {
+    if (fs.existsSync(name)) fs.copyFileSync(name, path.join('dist', name));
+  }
+  fs.writeFileSync('dist/index.html', `<!doctype html><meta charset="utf-8"><title>Fantasy Football Assets</title><body style="font-family:system-ui;background:#061626;color:white;padding:40px"><h1>Fantasy Football Assets</h1><p>Fantasy football image assets.</p></body>`);
 }
 main().catch(e=>{console.error(e);process.exit(1)});
