@@ -1,3 +1,3 @@
 [build]
-  command = "node build.js"
+  command = "node build.js && cp mnl-header-original-v2.jpg dist/mnl-header-original-v2.jpg && cp mnl-glance-original-v2.jpg dist/mnl-glance-original-v2.jpg"
   publish = "dist"
