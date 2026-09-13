@@ -27,10 +27,9 @@ jobs:
         run: |
           cp dist/mnl-header.png mnl-header.png
           cp dist/mnl-glance.png mnl-glance.png
-          curl -L 'https://oaisdmntprwestus.blob.core.windows.net/files/00000000-cccc-8230-be02-21135f0d46c8/raw?se=2026-09-13T02%3A33%3A50Z&sp=r&sv=2026-02-06&sr=b&scid=67c362cd-1d07-4989-a0f2-f2df9fa986ad&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-12T05%3A01%3A31Z&ske=2026-09-13T05%3A01%3A31Z&sks=b&skv=2026-02-06&sig=viImBJWpRWrHxi0GL6nQYpuTXKej8ovwjeXOlHBBGPA%3D' -o mnl-logo-final.png
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add mnl-header.png mnl-glance.png mnl-logo-final.png
+          git add mnl-header.png mnl-glance.png
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish Monday Night Lights sidebar logo [skip ci]"
+          git commit -m "Build Monday Night Lights image assets [skip ci]"
           git push
