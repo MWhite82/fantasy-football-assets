@@ -4,9 +4,6 @@ on:
   push:
     branches: [main]
     paths:
-      - 'build.js'
-      - 'package.json'
-      - 'netlify.toml'
       - '.github/workflows/build-assets.yml'
   workflow_dispatch:
 
@@ -18,18 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - run: npm install
-      - run: node build.js
-      - name: Publish generated assets to repository root
+      - name: Download approved Schism assets
         run: |
-          cp dist/mnl-header.png mnl-header.png
-          cp dist/mnl-glance.png mnl-glance.png
+          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-dbd8-81fd-ae9c-48a77abfbfe2/raw?se=2026-09-13T03%3A04%3A07Z&sp=r&sv=2026-02-06&sr=b&scid=7c53eccb-7209-4f83-8168-4d57e3183c7f&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T00%3A09%3A07Z&ske=2026-09-14T00%3A09%3A07Z&sks=b&skv=2026-02-06&sig=6/eyr07UIYHKIHUO/w21b7t1u1BzxKHk8fgdEHZc8dI%3D' -o schism-overview-final.jpg
+          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-7f64-81fd-ad91-9b926f3d9f45/raw?se=2026-09-13T03%3A04%3A07Z&sp=r&sv=2026-02-06&sr=b&scid=7c53eccb-7209-4f83-8168-4d57e3183c7f&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T00%3A06%3A45Z&ske=2026-09-14T00%3A06%3A45Z&sks=b&skv=2026-02-06&sig=LK0%2BwMlqJXjeBAuZV2Z0Q2jAD4laqD5ya2bdhFLo7us%3D' -o schism-glance-final.jpg
+          file schism-overview-final.jpg
+          file schism-glance-final.jpg
+      - name: Commit Schism assets
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add mnl-header.png mnl-glance.png
+          git add schism-overview-final.jpg schism-glance-final.jpg
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Build Monday Night Lights image assets [skip ci]"
+          git commit -m "Add Schism image assets [skip ci]"
           git push
