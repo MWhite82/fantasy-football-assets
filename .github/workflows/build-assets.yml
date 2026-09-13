@@ -4,9 +4,6 @@ on:
   push:
     branches: [main]
     paths:
-      - 'build.js'
-      - 'package.json'
-      - 'netlify.toml'
       - '.github/workflows/build-assets.yml'
   workflow_dispatch:
 
@@ -18,18 +15,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - run: npm install
-      - run: node build.js
-      - name: Publish generated assets to repository root
+      - name: Publish canonical Schism manager banners
         run: |
-          cp dist/mnl-header.png mnl-header.png
-          cp dist/mnl-glance.png mnl-glance.png
+          mkdir -p manager-banners
+          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-d194-81fd-aa1c-1fafefd0b6fb/raw?se=2026-09-13T15%3A33%3A02Z&sp=r&sv=2026-02-06&sr=b&scid=f0c32db5-19c2-421c-8161-c8ad3c5d6daa&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T00%3A06%3A46Z&ske=2026-09-14T00%3A06%3A46Z&sks=b&skv=2026-02-06&sig=nmrY4cGjjgRwCyAfjmzh/N4yQNuA1JLP8%2BBr0Uv2nVQ%3D' -o manager-banners/tj-lincoln-way-knights.png
+          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-0f0c-81fd-bf42-261580d2eec9/raw?se=2026-09-13T15%3A33%3A02Z&sp=r&sv=2026-02-06&sr=b&scid=f0c32db5-19c2-421c-8161-c8ad3c5d6daa&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T00%3A18%3A50Z&ske=2026-09-14T00%3A18%3A50Z&sks=b&skv=2026-02-06&sig=lD49C75piL3SUfq6lhpVGeve8p%2BrATTvsopF4acM66o%3D' -o manager-banners/tyler-fast-asleep.png
+          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-e5a0-81fd-aebe-43fce77edc1a/raw?se=2026-09-13T15%3A33%3A02Z&sp=r&sv=2026-02-06&sr=b&scid=f0c32db5-19c2-421c-8161-c8ad3c5d6daa&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T14%3A12%3A34Z&ske=2026-09-14T14%3A12%3A34Z&sks=b&skv=2026-02-06&sig=JNXsQU9NURD890oToFM8JMfYCzCu2uc5V%2BHijzOBlzw%3D' -o manager-banners/johnny-dawg-pound.png
+          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-2228-81fd-9e98-d31890beb4f2/raw?se=2026-09-13T15%3A33%3A02Z&sp=r&sv=2026-02-06&sr=b&scid=f0c32db5-19c2-421c-8161-c8ad3c5d6daa&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T02%3A22%3A51Z&ske=2026-09-14T02%3A22%3A51Z&sks=b&skv=2026-02-06&sig=fcwCEAmmltQMygsNyR8zSTYwx0VJALAY3xescxIGKDo%3D' -o manager-banners/marc-d-coventry-hellcats.png
+          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-c74c-81fd-8059-eae11940161c/raw?se=2026-09-13T15%3A33%3A02Z&sp=r&sv=2026-02-06&sr=b&scid=f0c32db5-19c2-421c-8161-c8ad3c5d6daa&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T13%3A31%3A36Z&ske=2026-09-14T13%3A31%3A36Z&sks=b&skv=2026-02-06&sig=XJhjR4xfsUP%2B2v3wWcV/Uy2jdBJxAyKEW6gCICHYG40%3D' -o manager-banners/gavin-lakemore-leviathans.png
+          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-20cc-81fd-a861-67bf7150e765/raw?se=2026-09-13T15%3A33%3A02Z&sp=r&sv=2026-02-06&sr=b&scid=f0c32db5-19c2-421c-8161-c8ad3c5d6daa&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T13%3A45%3A43Z&ske=2026-09-14T13%3A45%3A43Z&sks=b&skv=2026-02-06&sig=ETygmSrTue6tFuu7iX1D%2BSR2MCBv3SKTBXKeYcgbWjE%3D' -o manager-banners/joe-jeldred.png
+          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-48b4-81fd-ac35-c2bf5cc07756/raw?se=2026-09-13T15%3A33%3A02Z&sp=r&sv=2026-02-06&sr=b&scid=f0c32db5-19c2-421c-8161-c8ad3c5d6daa&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T02%3A38%3A56Z&ske=2026-09-14T02%3A38%3A56Z&sks=b&skv=2026-02-06&sig=SOsjopnrvw4Rbuw58dsSEu3kQh/DCBEWY2wbxGeeePA%3D' -o manager-banners/jesse-akron-achilles.png
+          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-6cd4-81fd-ac65-5dfded9adb37/raw?se=2026-09-13T15%3A33%3A02Z&sp=r&sv=2026-02-06&sr=b&scid=f0c32db5-19c2-421c-8161-c8ad3c5d6daa&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T02%3A43%3A00Z&ske=2026-09-14T02%3A43%3A00Z&sks=b&skv=2026-02-06&sig=CGaw0AUBbrH/AtU4Nx68Lq8aWx3ocxSYfGadRLvZpVA%3D' -o manager-banners/danny-arkham-assassins.png
+          curl -L 'https://oaisdmntprwestcentralus.blob.core.windows.net/files/00000000-818c-81fb-8db4-83933c4da151/raw?se=2026-09-13T15%3A33%3A02Z&sp=r&sv=2026-02-06&sr=b&scid=f0c32db5-19c2-421c-8161-c8ad3c5d6daa&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T00%3A21%3A35Z&ske=2026-09-14T00%3A21%3A35Z&sks=b&skv=2026-02-06&sig=W2NPlD1/JqJcQ3DxHvlX61XMcH79SqAfdqlRcCwoHGc%3D' -o manager-banners/george-chitown-hammers.png
+          curl -L 'https://oaisdmntprwestus3.blob.core.windows.net/files/00000000-9660-81fd-92a1-65ec6d466979/raw?se=2026-09-13T15%3A33%3A02Z&sp=r&sv=2026-02-06&sr=b&scid=f0c32db5-19c2-421c-8161-c8ad3c5d6daa&skoid=5e713cdb-766b-475e-a3ca-8adb6cf99aa0&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-13T14%3A11%3A40Z&ske=2026-09-14T14%3A11%3A40Z&sks=b&skv=2026-02-06&sig=H5GT1kgBjdVAgsXYzYKmCYetQs7d25weKuvCw6hHtXQ%3D' -o manager-banners/mitch-riggitywreckers.png
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add mnl-header.png mnl-glance.png manager-banners/mitch-riggitywreckers.png
+          git add manager-banners/*.png
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Build fantasy football image assets [skip ci]"
+          git commit -m "Publish canonical Schism manager banners [skip ci]"
           git push
