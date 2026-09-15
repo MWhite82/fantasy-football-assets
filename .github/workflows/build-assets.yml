@@ -27,12 +27,7 @@ jobs:
       - name: Publish approved MNL Mitch PNG
         run: |
           curl -L --fail "https://oaisdmntprcentralus.blob.core.windows.net/files/00000000-210c-81f5-b3f8-dd2ac70bce6a/raw?se=2026-09-15T22%3A30%3A48Z&sp=r&sv=2026-02-06&sr=b&scid=48f3a6c0-b22a-47a3-8ddc-b521f71bc85b&skoid=a1be202a-6464-476c-a496-723317c4a4db&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-15T13%3A10%3A31Z&ske=2026-09-16T13%3A10%3A31Z&sks=b&skv=2026-02-06&sig=OKUI%2B/zuiR3MgQUDHu%2B2Bh7RqiR0%2B4RAu4CDTOv9Ylc%3D" -o mnl-manager-banners/mitch-w-riggitywreckers.png
-          python - <<'PY'
-          from PIL import Image
-          with Image.open('mnl-manager-banners/mitch-w-riggitywreckers.png') as im:
-              assert im.format == 'PNG'
-              print(im.size)
-          PY
+          file mnl-manager-banners/mitch-w-riggitywreckers.png | grep -q 'PNG image data'
       - name: Publish generated assets to repository root
         run: |
           cp dist/mnl-header.png mnl-header.png
