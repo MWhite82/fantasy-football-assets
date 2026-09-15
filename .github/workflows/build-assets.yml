@@ -8,7 +8,6 @@ on:
       - 'package.json'
       - 'netlify.toml'
       - '.github/workflows/build-assets.yml'
-      - 'mnl-manager-banners/**'
   workflow_dispatch:
 
 permissions:
@@ -24,17 +23,13 @@ jobs:
           node-version: '22'
       - run: npm install
       - run: node build.js
-      - name: Publish approved MNL Mitch PNG
-        run: |
-          curl -L --fail "https://oaisdmntprcentralus.blob.core.windows.net/files/00000000-210c-81f5-b3f8-dd2ac70bce6a/raw?se=2026-09-15T22%3A30%3A48Z&sp=r&sv=2026-02-06&sr=b&scid=48f3a6c0-b22a-47a3-8ddc-b521f71bc85b&skoid=a1be202a-6464-476c-a496-723317c4a4db&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-15T13%3A10%3A31Z&ske=2026-09-16T13%3A10%3A31Z&sks=b&skv=2026-02-06&sig=OKUI%2B/zuiR3MgQUDHu%2B2Bh7RqiR0%2B4RAu4CDTOv9Ylc%3D" -o mnl-manager-banners/mitch-w-riggitywreckers.png
-          file mnl-manager-banners/mitch-w-riggitywreckers.png | grep -q 'PNG image data'
       - name: Publish generated assets to repository root
         run: |
           cp dist/mnl-header.png mnl-header.png
           cp dist/mnl-glance.png mnl-glance.png
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add mnl-header.png mnl-glance.png manager-banners/mitch-riggitywreckers.png mnl-manager-banners/mitch-w-riggitywreckers.png
+          git add mnl-header.png mnl-glance.png manager-banners/mitch-riggitywreckers.png
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Build fantasy football image assets [skip ci]"
           git push
