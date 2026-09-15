@@ -74,6 +74,9 @@ async function main(){
   const banner = sharp(Buffer.from(managerBannerSvg())).png({compressionLevel:9});
   await banner.clone().toFile('manager-banners/mitch-riggitywreckers-banner.png');
   await banner.clone().toFile(path.join('dist','manager-banners','mitch-riggitywreckers-banner.png'));
+  if (fs.existsSync('mnl-manager-banners')) {
+    fs.cpSync('mnl-manager-banners', path.join('dist','mnl-manager-banners'), { recursive: true });
+  }
   for (const name of ['schism-overview-final.jpg','schism-glance-final.jpg']) {
     if (fs.existsSync(name)) fs.copyFileSync(name, path.join('dist', name));
   }
