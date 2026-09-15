@@ -26,7 +26,15 @@ jobs:
       - run: node build.js
       - name: Convert MNL manager banner to PNG
         run: |
-          node -e "require('sharp')('mnl-manager-banners/mitch-w-riggitywreckers.jpg').png().toFile('mnl-manager-banners/mitch-w-riggitywreckers.png')"
+          python -m pip install pillow
+          python - <<'PY'
+          from PIL import Image, ImageFile
+          ImageFile.LOAD_TRUNCATED_IMAGES = True
+          src='mnl-manager-banners/mitch-w-riggitywreckers.jpg'
+          dst='mnl-manager-banners/mitch-w-riggitywreckers.png'
+          with Image.open(src) as im:
+              im.convert('RGB').save(dst, 'PNG', optimize=True)
+          PY
       - name: Publish generated assets to repository root
         run: |
           cp dist/mnl-header.png mnl-header.png
