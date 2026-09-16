@@ -32,13 +32,53 @@ jobs:
               mnl-manager-banners/.source/mitch.part4 \
               mnl-manager-banners/.source/mitch.part5 | base64 --decode > mnl-manager-banners/mitch-w-riggitywreckers.png
           test "$(wc -c < mnl-manager-banners/mitch-w-riggitywreckers.png)" -eq 11729
+      - name: Rebuild MNL group 1 banner PNGs
+        run: |
+          cat mnl-manager-banners/.source/paul-custom8.part1 \
+              mnl-manager-banners/.source/paul-custom8.part2 \
+              mnl-manager-banners/.source/paul-custom8.part3 \
+              mnl-manager-banners/.source/paul-custom8.part4 \
+              mnl-manager-banners/.source/paul-custom8.part5 | base64 --decode > mnl-manager-banners/paul-c-nicos-revenge-the-chase.png
+
+          cat mnl-manager-banners/.source/drew-custom8.part1 \
+              mnl-manager-banners/.source/drew-custom8.part2 \
+              mnl-manager-banners/.source/drew-custom8.part3 \
+              mnl-manager-banners/.source/drew-custom8.part4 \
+              mnl-manager-banners/.source/drew-custom8.part5 | base64 --decode > mnl-manager-banners/drew-wet-bandits.png
+
+          cat mnl-manager-banners/.source/danny-custom8.part1 \
+              mnl-manager-banners/.source/danny-custom8.part2 \
+              mnl-manager-banners/.source/danny-custom8.part3 \
+              mnl-manager-banners/.source/danny-custom8.part4 \
+              mnl-manager-banners/.source/danny-custom8.part5 | base64 --decode > /tmp/danny-danni-source.png
+
+          node - <<'NODE'
+          const sharp = require('sharp');
+          const files = [
+            'mnl-manager-banners/paul-c-nicos-revenge-the-chase.png',
+            'mnl-manager-banners/drew-wet-bandits.png',
+            '/tmp/danny-danni-source.png'
+          ];
+          (async () => {
+            for (const file of files) {
+              const m = await sharp(file).metadata();
+              if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
+                throw new Error(`${file}: expected PNG 920x173, got ${m.format} ${m.width}x${m.height}`);
+              }
+              console.log(`${file}: OK ${m.format} ${m.width}x${m.height}`);
+            }
+          })().catch(err => { console.error(err); process.exit(1); });
+          NODE
       - name: Publish generated assets to repository root
         run: |
           cp dist/mnl-header.png mnl-header.png
           cp dist/mnl-glance.png mnl-glance.png
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add mnl-header.png mnl-glance.png manager-banners/mitch-riggitywreckers.png mnl-manager-banners/mitch-w-riggitywreckers.png
+          git add mnl-header.png mnl-glance.png manager-banners/mitch-riggitywreckers.png \
+                  mnl-manager-banners/mitch-w-riggitywreckers.png \
+                  mnl-manager-banners/paul-c-nicos-revenge-the-chase.png \
+                  mnl-manager-banners/drew-wet-bandits.png
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Build fantasy football image assets [skip ci]"
           git push
