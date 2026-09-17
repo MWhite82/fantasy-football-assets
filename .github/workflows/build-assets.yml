@@ -1,6 +1,10 @@
 name: Build assets
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-assets.yml'
   workflow_dispatch:
 
 permissions:
@@ -11,4 +15,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "Build workflow isolated for staged banner repair."
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - name: Rebuild Paul banner only
+        run: |
+          cat mnl-manager-banners/.source/paul-v2.part1 \
+              mnl-manager-banners/.source/paul-v2.part2 \
+              mnl-manager-banners/.source/paul-v2.part3 \
+              mnl-manager-banners/.source/paul-v2.part4 \
+              mnl-manager-banners/.source/paul-v2.part5 \
+              mnl-manager-banners/.source/paul-v2.part6 \
+              mnl-manager-banners/.source/paul-v2.part7 | base64 --decode > mnl-manager-banners/paul-c-nicos-revenge-the-chase.png
+          node - <<'NODE'
+          const sharp = require('sharp');
+          (async () => {
+            const file = 'mnl-manager-banners/paul-c-nicos-revenge-the-chase.png';
+            const m = await sharp(file).metadata();
+            if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
+              throw new Error(`expected PNG 920x173, got ${m.format} ${m.width}x${m.height}`);
+            }
+            console.log(`Paul OK: ${m.format} ${m.width}x${m.height}`);
+          })().catch(err => { console.error(err); process.exit(1); });
+          NODE
+      - name: Publish Paul banner
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mnl-manager-banners/paul-c-nicos-revenge-the-chase.png
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Publish validated Paul manager banner [skip ci]"
+          git push
