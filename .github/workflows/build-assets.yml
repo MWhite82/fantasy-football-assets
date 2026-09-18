@@ -28,7 +28,14 @@ jobs:
                 mnl-manager-banners/.source/drew-clean-head2 \
                 mnl-manager-banners/.source/drew-custom8.part2 \
                 mnl-manager-banners/.source/drew-custom8.part3 \
-                mnl-manager-banners/.source/drew-custom8.part4 \
+                mnl-manager-banners/.source/drew-clean-p4a1-1 \
+                mnl-manager-banners/.source/drew-clean-p4a1-2 \
+                mnl-manager-banners/.source/drew-clean-p4a1-3 \
+                mnl-manager-banners/.source/drew-clean-p4a1-4 \
+                mnl-manager-banners/.source/drew-clean-p4a2 \
+                mnl-manager-banners/.source/drew-clean-p4a3 \
+                mnl-manager-banners/.source/drew-clean-p4a4 \
+                mnl-manager-banners/.source/drew-clean-part4b \
                 mnl-manager-banners/.source/drew-custom8.part5
           } | base64 --decode > mnl-manager-banners/drew-wet-bandits.png
 
