@@ -22,8 +22,11 @@ jobs:
       - name: Rebuild Drew banner only
         run: |
           {
-            head -c 8000 mnl-manager-banners/.source/drew-custom8.part1
-            cat mnl-manager-banners/.source/drew-custom8.part2 \
+            printf '%s' 'iVBORw0KGgoAAAANSUhEUgAAA5gAAACtCAMAAADiSSAMAAADAFBMVEUDEBsUQT/frVn1+Ps'
+            printf 'A%.0s' {1..1007}
+            cat mnl-manager-banners/.source/drew-clean-head1 \
+                mnl-manager-banners/.source/drew-clean-head2 \
+                mnl-manager-banners/.source/drew-custom8.part2 \
                 mnl-manager-banners/.source/drew-custom8.part3 \
                 mnl-manager-banners/.source/drew-custom8.part4 \
                 mnl-manager-banners/.source/drew-custom8.part5
