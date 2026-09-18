@@ -8,34 +8,71 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - run: npm install
-      - name: Danny Phase 2B reconstruction validation
+      - name: Danny Phase 2C validate and publish
         run: |
-          cat mnl-manager-banners/.source/danny-approved-20260918.part[0-9][0-9][0-9] \
-            | base64 --decode > /tmp/danny-phase2b.png
+          set -euo pipefail
 
-          test "$(wc -c < /tmp/danny-phase2b.png)" -eq 300812
-          echo "1b2f433bc3f8317ad3d51891e96040fad74323430c39286c14195264e4de6458  /tmp/danny-phase2b.png" | sha256sum -c -
+          cat mnl-manager-banners/.source/danny-approved-20260918.part[0-9][0-9][0-9] \
+            | base64 --decode > /tmp/danny-phase2c.png
+
+          test "$(wc -c < /tmp/danny-phase2c.png)" -eq 300812
+          echo "1b2f433bc3f8317ad3d51891e96040fad74323430c39286c14195264e4de6458  /tmp/danny-phase2c.png" | sha256sum -c -
 
           node - <<'NODE'
           const sharp = require('sharp');
           (async () => {
-            const file = '/tmp/danny-phase2b.png';
+            const file = '/tmp/danny-phase2c.png';
             const m = await sharp(file).metadata();
             if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
               throw new Error(`expected PNG 920x173, got ${m.format} ${m.width}x${m.height}`);
             }
             await sharp(file).raw().toBuffer();
-            console.log(`Danny Phase 2B PASS: ${m.format} ${m.width}x${m.height}; full decode succeeded`);
+            console.log(`Danny pre-publish PASS: ${m.format} ${m.width}x${m.height}; full decode succeeded`);
+          })().catch(err => { console.error(err); process.exit(1); });
+          NODE
+
+          cp /tmp/danny-phase2c.png mnl-manager-banners/danny-danny.png
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mnl-manager-banners/danny-danny.png
+          git commit -m "Publish validated Danny manager banner"
+          git push origin HEAD:main
+
+          raw_url="https://raw.githubusercontent.com/MWhite82/fantasy-football-assets/main/mnl-manager-banners/danny-danny.png"
+          matched=false
+          for attempt in {1..12}; do
+            curl -fsSL -H 'Cache-Control: no-cache' "${raw_url}?phase2c=${GITHUB_RUN_ID}-${attempt}" -o /tmp/danny-raw.png
+            if test "$(wc -c < /tmp/danny-raw.png)" -eq 300812 \
+              && echo "1b2f433bc3f8317ad3d51891e96040fad74323430c39286c14195264e4de6458  /tmp/danny-raw.png" | sha256sum -c -; then
+              matched=true
+              break
+            fi
+            sleep 5
+          done
+          test "$matched" = true
+
+          node - <<'NODE'
+          const sharp = require('sharp');
+          (async () => {
+            const file = '/tmp/danny-raw.png';
+            const m = await sharp(file).metadata();
+            if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
+              throw new Error(`raw URL expected PNG 920x173, got ${m.format} ${m.width}x${m.height}`);
+            }
+            await sharp(file).raw().toBuffer();
+            console.log(`Danny raw URL PASS: ${m.format} ${m.width}x${m.height}; full decode succeeded`);
           })().catch(err => { console.error(err); process.exit(1); });
           NODE
