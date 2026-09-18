@@ -21,24 +21,11 @@ jobs:
       - run: npm install
       - name: Danny Phase 2B reconstruction validation
         run: |
-          {
-            cat mnl-manager-banners/.source/danny-v2.head-prefix
-            printf 'A%.0s' {1..1007}
-            cat mnl-manager-banners/.source/danny-v2.head-tail1 \
-                mnl-manager-banners/.source/danny-v2.head-tail2 \
-                mnl-manager-banners/.source/danny-v2.head-tail3 \
-                mnl-manager-banners/.source/danny-v2.head-tail4 \
-                mnl-manager-banners/.source/danny-custom8.part2 \
-                mnl-manager-banners/.source/danny-v2.part3-1 \
-                mnl-manager-banners/.source/danny-v2.part3-2 \
-                mnl-manager-banners/.source/danny-v2.part3-3 \
-                mnl-manager-banners/.source/danny-v2.part3-4 \
-                mnl-manager-banners/.source/danny-custom8.part4 \
-                mnl-manager-banners/.source/danny-custom8.part5
-          } | base64 --decode > /tmp/danny-phase2b.png
+          cat mnl-manager-banners/.source/danny-approved-20260918.part[0-9][0-9][0-9] \
+            | base64 --decode > /tmp/danny-phase2b.png
 
-          test "$(wc -c < /tmp/danny-phase2b.png)" -eq 26188
-          echo "9f9f1e4aa9965f381b81133df60a84a2e31001f7fbec9c0e0fcc1ebe3644ce11  /tmp/danny-phase2b.png" | sha256sum -c -
+          test "$(wc -c < /tmp/danny-phase2b.png)" -eq 300812
+          echo "1b2f433bc3f8317ad3d51891e96040fad74323430c39286c14195264e4de6458  /tmp/danny-phase2b.png" | sha256sum -c -
 
           node - <<'NODE'
           const sharp = require('sharp');
@@ -48,6 +35,7 @@ jobs:
             if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
               throw new Error(`expected PNG 920x173, got ${m.format} ${m.width}x${m.height}`);
             }
-            console.log(`Danny Phase 2B PASS: ${m.format} ${m.width}x${m.height}`);
+            await sharp(file).raw().toBuffer();
+            console.log(`Danny Phase 2B PASS: ${m.format} ${m.width}x${m.height}; full decode succeeded`);
           })().catch(err => { console.error(err); process.exit(1); });
           NODE
