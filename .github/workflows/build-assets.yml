@@ -21,58 +21,100 @@ jobs:
         with:
           node-version: '22'
       - run: npm install
-      - name: Danny Phase 2C validate and publish
+      - name: Validate and publish six MNL manager banners
         run: |
           set -euo pipefail
 
-          cat mnl-manager-banners/.source/danny-approved-20260918.part[0-9][0-9][0-9] \
-            | base64 --decode > /tmp/danny-phase2c.png
+          slugs=(
+            sean-m-sean-shine
+            mike-w-off
+            gene-e-integrity
+            darren-p-rookiewilds
+            mike-r-ezrich
+            jake-w-jake-and-the-fat-men
+          )
+          declare -A sizes=(
+            [sean-m-sean-shine]=62420
+            [mike-w-off]=61989
+            [gene-e-integrity]=62265
+            [darren-p-rookiewilds]=62503
+            [mike-r-ezrich]=62045
+            [jake-w-jake-and-the-fat-men]=62360
+          )
+          declare -A hashes=(
+            [sean-m-sean-shine]=d3b8361324948e4b17fc90534aa2839991638b07ce730a74ceb5cf25bf309833
+            [mike-w-off]=98ebc0e27a668a1b1ed9fa7dafbcab1da19c7d9592b1b66671d3b349aaf054ea
+            [gene-e-integrity]=91fa17949443196b274ae81c91ac43106e8d24ffb9f3d75f6c25d44e9c088064
+            [darren-p-rookiewilds]=6b36f50128cd4547e5da9ed406d5073524ed267f4932f413e05174c8ef1f58f4
+            [mike-r-ezrich]=1ad085f19575877cc483d7ed7e4c6e05934e94ff2809ab39c41a41fcf928e201
+            [jake-w-jake-and-the-fat-men]=fc8a3aa8efb8649755bfc4022293347d77536f6d134a43eff9d52d02c3ccddc7
+          )
 
-          test "$(wc -c < /tmp/danny-phase2c.png)" -eq 300812
-          echo "1b2f433bc3f8317ad3d51891e96040fad74323430c39286c14195264e4de6458  /tmp/danny-phase2c.png" | sha256sum -c -
+          for slug in "\${slugs[@]}"; do
+            cat mnl-manager-banners/.source/"\${slug}"-approved-20260919.part[0-9][0-9][0-9] \
+              | base64 --decode > "/tmp/\${slug}.png"
+            test "$(wc -c < "/tmp/\${slug}.png")" -eq "\${sizes[$slug]}"
+            echo "\${hashes[$slug]}  /tmp/\${slug}.png" | sha256sum -c -
+          done
 
           node - <<'NODE'
           const sharp = require('sharp');
+          const slugs = [
+            'sean-m-sean-shine','mike-w-off','gene-e-integrity',
+            'darren-p-rookiewilds','mike-r-ezrich','jake-w-jake-and-the-fat-men'
+          ];
           (async () => {
-            const file = '/tmp/danny-phase2c.png';
-            const m = await sharp(file).metadata();
-            if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
-              throw new Error(`expected PNG 920x173, got ${m.format} ${m.width}x${m.height}`);
+            for (const slug of slugs) {
+              const file = \`/tmp/\${slug}.png\`;
+              const m = await sharp(file).metadata();
+              if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
+                throw new Error(\`\${slug}: expected PNG 920x173, got \${m.format} \${m.width}x\${m.height}\`);
+              }
+              await sharp(file).raw().toBuffer();
+              console.log(\`\${slug} pre-publish PASS\`);
             }
-            await sharp(file).raw().toBuffer();
-            console.log(`Danny pre-publish PASS: ${m.format} ${m.width}x${m.height}; full decode succeeded`);
           })().catch(err => { console.error(err); process.exit(1); });
           NODE
 
-          cp /tmp/danny-phase2c.png mnl-manager-banners/danny-danny.png
+          for slug in "\${slugs[@]}"; do
+            cp "/tmp/\${slug}.png" "mnl-manager-banners/\${slug}.png"
+          done
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add mnl-manager-banners/danny-danny.png
-          git commit -m "Publish validated Danny manager banner"
+          git add mnl-manager-banners/*.png
+          git commit -m "Publish six MNL manager banners"
           git push origin HEAD:main
 
-          raw_url="https://raw.githubusercontent.com/MWhite82/fantasy-football-assets/main/mnl-manager-banners/danny-danny.png"
-          matched=false
-          for attempt in {1..12}; do
-            curl -fsSL -H 'Cache-Control: no-cache' "${raw_url}?phase2c=${GITHUB_RUN_ID}-${attempt}" -o /tmp/danny-raw.png
-            if test "$(wc -c < /tmp/danny-raw.png)" -eq 300812 \
-              && echo "1b2f433bc3f8317ad3d51891e96040fad74323430c39286c14195264e4de6458  /tmp/danny-raw.png" | sha256sum -c -; then
-              matched=true
-              break
-            fi
-            sleep 5
+          for slug in "\${slugs[@]}"; do
+            raw_url="https://raw.githubusercontent.com/MWhite82/fantasy-football-assets/main/mnl-manager-banners/\${slug}.png"
+            matched=false
+            for attempt in {1..12}; do
+              curl -fsSL -H 'Cache-Control: no-cache' "\${raw_url}?publish=\${GITHUB_RUN_ID}-\${attempt}" -o "/tmp/raw-\${slug}.png"
+              if test "$(wc -c < "/tmp/raw-\${slug}.png")" -eq "\${sizes[$slug]}" \
+                && echo "\${hashes[$slug]}  /tmp/raw-\${slug}.png" | sha256sum -c -; then
+                matched=true
+                break
+              fi
+              sleep 5
+            done
+            test "$matched" = true
           done
-          test "$matched" = true
 
           node - <<'NODE'
           const sharp = require('sharp');
+          const slugs = [
+            'sean-m-sean-shine','mike-w-off','gene-e-integrity',
+            'darren-p-rookiewilds','mike-r-ezrich','jake-w-jake-and-the-fat-men'
+          ];
           (async () => {
-            const file = '/tmp/danny-raw.png';
-            const m = await sharp(file).metadata();
-            if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
-              throw new Error(`raw URL expected PNG 920x173, got ${m.format} ${m.width}x${m.height}`);
+            for (const slug of slugs) {
+              const file = \`/tmp/raw-\${slug}.png\`;
+              const m = await sharp(file).metadata();
+              if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
+                throw new Error(\`\${slug}: raw URL expected PNG 920x173, got \${m.format} \${m.width}x\${m.height}\`);
+              }
+              await sharp(file).raw().toBuffer();
+              console.log(\`\${slug} raw URL PASS\`);
             }
-            await sharp(file).raw().toBuffer();
-            console.log(`Danny raw URL PASS: ${m.format} ${m.width}x${m.height}; full decode succeeded`);
           })().catch(err => { console.error(err); process.exit(1); });
           NODE
