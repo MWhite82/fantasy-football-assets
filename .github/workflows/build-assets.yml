@@ -65,13 +65,13 @@ jobs:
           ];
           (async () => {
             for (const slug of slugs) {
-              const file = \`/tmp/${slug}.png\`;
+              const file = `/tmp/${slug}.png`;
               const m = await sharp(file).metadata();
               if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
-                throw new Error(\`${slug}: expected PNG 920x173, got ${m.format} ${m.width}x${m.height}\`);
+                throw new Error(`${slug}: expected PNG 920x173, got ${m.format} ${m.width}x${m.height}`);
               }
               await sharp(file).raw().toBuffer();
-              console.log(\`${slug} pre-publish PASS\`);
+              console.log(`${slug} pre-publish PASS`);
             }
           })().catch(err => { console.error(err); process.exit(1); });
           NODE
@@ -108,13 +108,13 @@ jobs:
           ];
           (async () => {
             for (const slug of slugs) {
-              const file = \`/tmp/raw-${slug}.png\`;
+              const file = `/tmp/raw-${slug}.png`;
               const m = await sharp(file).metadata();
               if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
-                throw new Error(\`${slug}: raw URL expected PNG 920x173, got ${m.format} ${m.width}x${m.height}\`);
+                throw new Error(`${slug}: raw URL expected PNG 920x173, got ${m.format} ${m.width}x${m.height}`);
               }
               await sharp(file).raw().toBuffer();
-              console.log(\`${slug} raw URL PASS\`);
+              console.log(`${slug} raw URL PASS`);
             }
           })().catch(err => { console.error(err); process.exit(1); });
           NODE
