@@ -50,11 +50,11 @@ jobs:
             [jake-w-jake-and-the-fat-men]=fc8a3aa8efb8649755bfc4022293347d77536f6d134a43eff9d52d02c3ccddc7
           )
 
-          for slug in "\${slugs[@]}"; do
-            cat mnl-manager-banners/.source/"\${slug}"-approved-20260919.part[0-9][0-9][0-9] \
-              | base64 --decode > "/tmp/\${slug}.png"
-            test "$(wc -c < "/tmp/\${slug}.png")" -eq "\${sizes[$slug]}"
-            echo "\${hashes[$slug]}  /tmp/\${slug}.png" | sha256sum -c -
+          for slug in "${slugs[@]}"; do
+            cat mnl-manager-banners/.source/"${slug}"-approved-20260919.part[0-9][0-9][0-9] \
+              | base64 --decode > "/tmp/${slug}.png"
+            test "$(wc -c < "/tmp/${slug}.png")" -eq "${sizes[$slug]}"
+            echo "${hashes[$slug]}  /tmp/${slug}.png" | sha256sum -c -
           done
 
           node - <<'NODE'
@@ -65,19 +65,19 @@ jobs:
           ];
           (async () => {
             for (const slug of slugs) {
-              const file = \`/tmp/\${slug}.png\`;
+              const file = \`/tmp/${slug}.png\`;
               const m = await sharp(file).metadata();
               if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
-                throw new Error(\`\${slug}: expected PNG 920x173, got \${m.format} \${m.width}x\${m.height}\`);
+                throw new Error(\`${slug}: expected PNG 920x173, got ${m.format} ${m.width}x${m.height}\`);
               }
               await sharp(file).raw().toBuffer();
-              console.log(\`\${slug} pre-publish PASS\`);
+              console.log(\`${slug} pre-publish PASS\`);
             }
           })().catch(err => { console.error(err); process.exit(1); });
           NODE
 
-          for slug in "\${slugs[@]}"; do
-            cp "/tmp/\${slug}.png" "mnl-manager-banners/\${slug}.png"
+          for slug in "${slugs[@]}"; do
+            cp "/tmp/${slug}.png" "mnl-manager-banners/${slug}.png"
           done
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -85,13 +85,13 @@ jobs:
           git commit -m "Publish six MNL manager banners"
           git push origin HEAD:main
 
-          for slug in "\${slugs[@]}"; do
-            raw_url="https://raw.githubusercontent.com/MWhite82/fantasy-football-assets/main/mnl-manager-banners/\${slug}.png"
+          for slug in "${slugs[@]}"; do
+            raw_url="https://raw.githubusercontent.com/MWhite82/fantasy-football-assets/main/mnl-manager-banners/${slug}.png"
             matched=false
             for attempt in {1..12}; do
-              curl -fsSL -H 'Cache-Control: no-cache' "\${raw_url}?publish=\${GITHUB_RUN_ID}-\${attempt}" -o "/tmp/raw-\${slug}.png"
-              if test "$(wc -c < "/tmp/raw-\${slug}.png")" -eq "\${sizes[$slug]}" \
-                && echo "\${hashes[$slug]}  /tmp/raw-\${slug}.png" | sha256sum -c -; then
+              curl -fsSL -H 'Cache-Control: no-cache' "${raw_url}?publish=${GITHUB_RUN_ID}-${attempt}" -o "/tmp/raw-${slug}.png"
+              if test "$(wc -c < "/tmp/raw-${slug}.png")" -eq "${sizes[$slug]}" \
+                && echo "${hashes[$slug]}  /tmp/raw-${slug}.png" | sha256sum -c -; then
                 matched=true
                 break
               fi
@@ -108,13 +108,13 @@ jobs:
           ];
           (async () => {
             for (const slug of slugs) {
-              const file = \`/tmp/raw-\${slug}.png\`;
+              const file = \`/tmp/raw-${slug}.png\`;
               const m = await sharp(file).metadata();
               if (m.format !== 'png' || m.width !== 920 || m.height !== 173) {
-                throw new Error(\`\${slug}: raw URL expected PNG 920x173, got \${m.format} \${m.width}x\${m.height}\`);
+                throw new Error(\`${slug}: raw URL expected PNG 920x173, got ${m.format} ${m.width}x${m.height}\`);
               }
               await sharp(file).raw().toBuffer();
-              console.log(\`\${slug} raw URL PASS\`);
+              console.log(\`${slug} raw URL PASS\`);
             }
           })().catch(err => { console.error(err); process.exit(1); });
           NODE
